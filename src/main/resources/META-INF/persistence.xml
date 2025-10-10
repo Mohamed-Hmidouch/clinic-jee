@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence 
+             https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
+             version="3.2">
+
+    <persistence-unit name="default" transaction-type="RESOURCE_LOCAL">
+        <!-- Explicit entity listing to ensure reliable discovery on Tomcat -->
+        <class>org.example.clinicjee.domain.User</class>
+        <class>org.example.clinicjee.domain.Patient</class>
+        <class>org.example.clinicjee.domain.Doctor</class>
+        <class>org.example.clinicjee.domain.Specialty</class>
+        <class>org.example.clinicjee.domain.Department</class>
+        <class>org.example.clinicjee.domain.Availability</class>
+        <class>org.example.clinicjee.domain.Appointment</class>
+        <class>org.example.clinicjee.domain.MedicalNote</class>
+        <class>org.example.clinicjee.domain.Settings</class>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
+        <properties>
+            <!-- PostgreSQL Driver -->
+            <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://postgres:5432/clinicdb"/>
+            <property name="jakarta.persistence.jdbc.user" value="clinicuser"/>
+            <property name="jakarta.persistence.jdbc.password" value="clinicpass"/>
+
+            <!-- Hibernate Dialect for PostgreSQL -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+
+            <!-- Connection Pool Settings -->
+            <property name="hibernate.hikari.minimumIdle" value="5"/>
+            <property name="hibernate.hikari.maximumPoolSize" value="20"/>
+            <property name="hibernate.hikari.idleTimeout" value="300000"/>
+        </properties>
+    </persistence-unit>
+</persistence>
