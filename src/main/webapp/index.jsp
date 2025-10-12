@@ -194,6 +194,16 @@
                         Liens Rapides
                     </h2>
                     <div class="space-y-2">
+                        <a href="register-doctor.jsp" class="block p-3 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 rounded-lg transition group border-2 border-blue-200">
+                            <div class="flex items-center justify-between">
+                                <span class="font-semibold text-blue-700 group-hover:text-blue-800 flex items-center">
+                                    <i class="fas fa-user-md mr-2"></i>
+                                    Inscription Docteur
+                                </span>
+                                <i class="fas fa-arrow-right text-blue-400 group-hover:text-blue-600"></i>
+                            </div>
+                            <span class="text-xs text-blue-600">Créer un compte professionnel</span>
+                        </a>
                         <a href="http://localhost:5051" target="_blank" class="block p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition group">
                             <div class="flex items-center justify-between">
                                 <span class="font-semibold text-gray-700 group-hover:text-indigo-600">pgAdmin</span>
