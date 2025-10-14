@@ -18,6 +18,13 @@ public class Availability {
     private JourSemaine jour;
     private LocalTime heureDebut;
     private LocalTime heureFin;
+    
+    @Column(name = "pause_debut")
+    private LocalTime pauseDebut;
+    
+    @Column(name = "pause_fin")
+    private LocalTime pauseFin;
+    
     @Enumerated(EnumType.STRING)
     private StatutDisponibilite statut;
     private Boolean validite;
@@ -27,11 +34,13 @@ public class Availability {
     public Availability() {
     }
 
-    public Availability(Long id, JourSemaine jour, LocalTime heureDebut, LocalTime heureFin, StatutDisponibilite statut, Boolean validite) {
+    public Availability(Long id, JourSemaine jour, LocalTime heureDebut, LocalTime heureFin, LocalTime pauseDebut, LocalTime pauseFin, StatutDisponibilite statut, Boolean validite) {
         this.id = id;
         this.jour = jour;
         this.heureDebut = heureDebut;
         this.heureFin = heureFin;
+        this.pauseDebut = pauseDebut;
+        this.pauseFin = pauseFin;
         this.statut = statut;
         this.validite = validite;
     }
@@ -67,6 +76,22 @@ public class Availability {
 
     public void setHeureFin(LocalTime heureFin) {
         this.heureFin = heureFin;
+    }
+
+    public LocalTime getPauseDebut() {
+        return pauseDebut;
+    }
+
+    public void setPauseDebut(LocalTime pauseDebut) {
+        this.pauseDebut = pauseDebut;
+    }
+
+    public LocalTime getPauseFin() {
+        return pauseFin;
+    }
+
+    public void setPauseFin(LocalTime pauseFin) {
+        this.pauseFin = pauseFin;
     }
 
     public StatutDisponibilite getStatut() {

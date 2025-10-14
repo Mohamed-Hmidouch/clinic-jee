@@ -113,7 +113,20 @@ public class AuthServlet extends HttpServlet {
         // 3. Appeler le service
         AuthResponse authResponse = authService.login(loginRequest);
         
-        // 4. Envoyer la réponse
+        // 4. Créer une session côté serveur pour les utilisateurs web (permet la redirection vers /patient/dashboard)
+        try {
+            // Récupérer l'utilisateur associé au token et le stocker en session
+            org.example.clinicjee.domain.User currentUser = authService.getCurrentUser(authResponse.getToken());
+            jakarta.servlet.http.HttpSession session = request.getSession(true);
+            session.setAttribute("user", currentUser);
+            session.setAttribute("userId", currentUser.getId());
+            session.setAttribute("userRole", currentUser.getRole() != null ? currentUser.getRole().toString() : null);
+        } catch (Exception e) {
+            // Si la création de session échoue, on continue quand même et on renvoie la réponse API
+            e.printStackTrace();
+        }
+
+        // 5. Envoyer la réponse
         response.setStatus(HttpServletResponse.SC_OK);
         sendJsonResponse(response, authResponse);
     }

@@ -4,235 +4,424 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clinic JEE - Dashboard</title>
+    <title>IBnSina Hospital - Votre Santé, Notre Priorité</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        }
+        
+        body {
+            line-height: 1.7;
+            letter-spacing: -0.011em;
+        }
+        
+        .service-card {
+            transition: all 0.3s ease;
+        }
+        
+        .service-card:hover {
+            border-color: #10b981;
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .specialty-card {
+            transition: all 0.3s ease;
+        }
+        
+        .specialty-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px -6px rgba(20, 184, 166, 0.25);
+        }
+        
+        .hero-overlay {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(20, 184, 166, 0.85) 100%);
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
-    
+
+<body class="bg-gray-50 antialiased">
     <!-- Navbar -->
-    <nav class="bg-white shadow-lg">
+    <nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <i class="fas fa-hospital text-indigo-600 text-3xl mr-3"></i>
-                    <span class="text-2xl font-bold text-gray-800">Clinic JEE</span>
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center shadow-sm">
+                        <i class="fas fa-heartbeat text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-gray-900 tracking-tight">IBnSina Hospital</h1>
+                        <p class="text-xs text-gray-500 -mt-0.5">Excellence in Healthcare</p>
+                    </div>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <span class="px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
-                        <i class="fas fa-circle text-green-500 text-xs mr-1"></i> En ligne
-                    </span>
+                
+                <!-- Navigation Links (Desktop) -->
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#services" class="text-sm font-medium text-gray-600 hover:text-emerald-600 transition">Services</a>
+                    <a href="#specialties" class="text-sm font-medium text-gray-600 hover:text-emerald-600 transition">Spécialités</a>
+                    <a href="#about" class="text-sm font-medium text-gray-600 hover:text-emerald-600 transition">À propos</a>
+                    <a href="#contact" class="text-sm font-medium text-gray-600 hover:text-emerald-600 transition">Contact</a>
+                </div>
+                
+                <!-- Auth Buttons -->
+                <div class="flex items-center gap-3">
+                    <a href="/auth/login" class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-emerald-600 transition">
+                        Connexion
+                    </a>
+                    <a href="/auth/register" class="px-4 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition shadow-sm">
+                        Inscription
+                    </a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Hero Section -->
+    <section class="relative min-h-[600px] flex items-center">
+        <img src="assets/img/photo1687881786-q8l4wusuky06tf6xem4orgz7v4i29g1xi5mma1otcw.jpeg" 
+             alt="Hôpital" 
+             class="absolute inset-0 w-full h-full object-cover">
+        <div class="hero-overlay absolute inset-0"></div>
         
-        <!-- Hero Section -->
-        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl shadow-2xl p-8 mb-8 text-white">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-4xl font-bold mb-2">Bienvenue sur Clinic JEE</h1>
-                    <p class="text-indigo-100 text-lg">Système de gestion de clinique moderne et sécurisé</p>
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+            <div class="max-w-2xl">
+                <div class="inline-block mb-6">
+                    <span class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white text-sm font-medium rounded-full border border-white/30">
+                        🏥 Service d'urgence 24/7
+                    </span>
                 </div>
-                <i class="fas fa-heartbeat text-8xl opacity-20"></i>
-            </div>
-        </div>
-
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <!-- Card 1 -->
-            <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="bg-blue-100 p-3 rounded-lg">
-                        <i class="fas fa-user-md text-blue-600 text-2xl"></i>
-                    </div>
-                    <span class="text-green-600 text-sm font-semibold">+12%</span>
-                </div>
-                <h3 class="text-gray-500 text-sm font-medium mb-1">Médecins</h3>
-                <p class="text-3xl font-bold text-gray-800">24</p>
-            </div>
-
-            <!-- Card 2 -->
-            <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="bg-green-100 p-3 rounded-lg">
-                        <i class="fas fa-users text-green-600 text-2xl"></i>
-                    </div>
-                    <span class="text-green-600 text-sm font-semibold">+8%</span>
-                </div>
-                <h3 class="text-gray-500 text-sm font-medium mb-1">Patients</h3>
-                <p class="text-3xl font-bold text-gray-800">1,245</p>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="bg-purple-100 p-3 rounded-lg">
-                        <i class="fas fa-calendar-check text-purple-600 text-2xl"></i>
-                    </div>
-                    <span class="text-red-600 text-sm font-semibold">-3%</span>
-                </div>
-                <h3 class="text-gray-500 text-sm font-medium mb-1">Rendez-vous</h3>
-                <p class="text-3xl font-bold text-gray-800">89</p>
-            </div>
-
-            <!-- Card 4 -->
-            <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="bg-yellow-100 p-3 rounded-lg">
-                        <i class="fas fa-chart-line text-yellow-600 text-2xl"></i>
-                    </div>
-                    <span class="text-green-600 text-sm font-semibold">+15%</span>
-                </div>
-                <h3 class="text-gray-500 text-sm font-medium mb-1">Revenus</h3>
-                <p class="text-3xl font-bold text-gray-800">45.2K €</p>
-            </div>
-        </div>
-
-        <!-- Main Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- Left Column -->
-            <div class="lg:col-span-2 space-y-6">
                 
-                <!-- API Endpoints -->
-                <div class="bg-white rounded-xl shadow-lg p-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                        <i class="fas fa-plug text-indigo-600 mr-2"></i>
-                        Endpoints API REST
-                    </h2>
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-                            <div class="flex items-center space-x-3">
-                                <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-bold rounded-full">GET</span>
-                                <code class="text-sm text-gray-700">/api/hello-world</code>
+                <h1 class="text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+                    Votre Santé,<br/>
+                    Notre Mission
+                </h1>
+                
+                <p class="text-xl text-white/95 mb-8 leading-relaxed">
+                    Des soins de qualité avec des professionnels dévoués
+                </p>
+                
+                <div class="flex flex-wrap gap-4">
+                    <a href="#contact" class="px-8 py-4 bg-white text-emerald-600 font-semibold rounded-lg hover:bg-gray-50 transition shadow-lg">
+                        Prendre rendez-vous
+                    </a>
+                    <a href="#services" class="px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg hover:bg-white/20 transition border border-white/30">
+                        Découvrir
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <h2 class="text-3xl font-semibold text-gray-900 mb-3">Nos Services</h2>
+                <p class="text-gray-600">Excellence médicale à votre service</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="service-card bg-white border-2 border-gray-100 rounded-xl p-6">
+                    <div class="w-14 h-14 bg-emerald-100 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-stethoscope text-emerald-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Consultations</h3>
+                    <p class="text-sm text-gray-600">Expertise médicale</p>
+                </div>
+                
+                <div class="service-card bg-white border-2 border-gray-100 rounded-xl p-6">
+                    <div class="w-14 h-14 bg-teal-100 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-ambulance text-teal-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Urgences 24/7</h3>
+                    <p class="text-sm text-gray-600">Service continu</p>
+                </div>
+                
+                <div class="service-card bg-white border-2 border-gray-100 rounded-xl p-6">
+                    <div class="w-14 h-14 bg-cyan-100 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-x-ray text-cyan-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Imagerie</h3>
+                    <p class="text-sm text-gray-600">Technologie avancée</p>
+                </div>
+                
+                <div class="service-card bg-white border-2 border-gray-100 rounded-xl p-6">
+                    <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-flask text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Laboratoire</h3>
+                    <p class="text-sm text-gray-600">Analyses précises</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="py-16 bg-gradient-to-br from-emerald-600 to-teal-600">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-white">
+                <div>
+                    <div class="text-4xl font-bold mb-2">150+</div>
+                    <div class="text-emerald-100 text-sm">Médecins Experts</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold mb-2">50K+</div>
+                    <div class="text-emerald-100 text-sm">Patients Soignés</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold mb-2">25+</div>
+                    <div class="text-emerald-100 text-sm">Années d'Excellence</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold mb-2">98%</div>
+                    <div class="text-emerald-100 text-sm">Satisfaction</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Specialties Section -->
+    <section id="specialties" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <h2 class="text-3xl font-semibold text-gray-900 mb-3">Nos Spécialités</h2>
+                <p class="text-gray-600">Excellence médicale pluridisciplinaire</p>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div class="specialty-card bg-white rounded-xl p-5 text-center border-2 border-emerald-100">
+                    <div class="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-heart text-emerald-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-sm font-semibold text-gray-900">Cardiologie</h3>
+                </div>
+                
+                <div class="specialty-card bg-white rounded-xl p-5 text-center border-2 border-teal-100">
+                    <div class="w-14 h-14 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-brain text-teal-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-sm font-semibold text-gray-900">Neurologie</h3>
+                </div>
+                
+                <div class="specialty-card bg-white rounded-xl p-5 text-center border-2 border-cyan-100">
+                    <div class="w-14 h-14 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-bone text-cyan-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-sm font-semibold text-gray-900">Orthopédie</h3>
+                </div>
+                
+                <div class="specialty-card bg-white rounded-xl p-5 text-center border-2 border-green-100">
+                    <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-baby text-green-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-sm font-semibold text-gray-900">Pédiatrie</h3>
+                </div>
+                
+                <div class="specialty-card bg-white rounded-xl p-5 text-center border-2 border-emerald-100">
+                    <div class="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-lungs text-emerald-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-sm font-semibold text-gray-900">Pneumologie</h3>
+                </div>
+                
+                <div class="specialty-card bg-white rounded-xl p-5 text-center border-2 border-teal-100">
+                    <div class="w-14 h-14 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-eye text-teal-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-sm font-semibold text-gray-900">Ophtalmologie</h3>
+                </div>
+                
+                <div class="specialty-card bg-white rounded-xl p-5 text-center border-2 border-cyan-100">
+                    <div class="w-14 h-14 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-tooth text-cyan-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-sm font-semibold text-gray-900">Dentisterie</h3>
+                </div>
+                
+                <div class="specialty-card bg-white rounded-xl p-5 text-center border-2 border-green-100">
+                    <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-microscope text-green-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-sm font-semibold text-gray-900">Oncologie</h3>
+                </div>
+                
+                <div class="specialty-card bg-white rounded-xl p-5 text-center border-2 border-emerald-100">
+                    <div class="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-user-md text-emerald-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-sm font-semibold text-gray-900">Dermatologie</h3>
+                </div>
+                
+                <div class="specialty-card bg-white rounded-xl p-5 text-center border-2 border-teal-100">
+                    <div class="w-14 h-14 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-procedures text-teal-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-sm font-semibold text-gray-900">Chirurgie</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- Contact Form -->
+                <div>
+                    <h2 class="text-3xl font-semibold text-gray-900 mb-4">Contactez-nous</h2>
+                    <p class="text-gray-600 mb-8">Remplissez le formulaire et notre équipe vous répondra rapidement</p>
+                    
+                    <form class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nom complet</label>
+                                <input type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition" placeholder="Votre nom">
                             </div>
-                            <a href="api/hello-world" target="_blank" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm font-semibold">
-                                Tester <i class="fas fa-arrow-right ml-1"></i>
-                            </a>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Téléphone</label>
+                                <input type="tel" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition" placeholder="+212 6XX XXX XXX">
+                            </div>
                         </div>
                         
-                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-                            <div class="flex items-center space-x-3">
-                                <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded-full">GET</span>
-                                <code class="text-sm text-gray-700">/test-connection</code>
-                            </div>
-                            <a href="test-connection" target="_blank" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-semibold">
-                                Tester BDD <i class="fas fa-database ml-1"></i>
-                            </a>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition" placeholder="votre@email.com">
                         </div>
-                    </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                            <textarea rows="4" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition" placeholder="Comment pouvons-nous vous aider ?"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="w-full px-6 py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition shadow-sm">
+                            Envoyer le message
+                        </button>
+                    </form>
                 </div>
-
-                <!-- Server Info -->
-                <div class="bg-white rounded-xl shadow-lg p-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                        <i class="fas fa-server text-indigo-600 mr-2"></i>
-                        Informations Serveur
-                    </h2>
-                    <div class="space-y-3 font-mono text-sm">
-                        <div class="flex justify-between p-3 bg-blue-50 rounded-lg">
-                            <span class="text-gray-600">Session ID:</span>
-                            <span class="text-gray-800 font-semibold"><%= session.getId().substring(0, 20) %>...</span>
-                        </div>
-                        <div class="flex justify-between p-3 bg-blue-50 rounded-lg">
-                            <span class="text-gray-600">Serveur:</span>
-                            <span class="text-gray-800 font-semibold"><%= application.getServerInfo() %></span>
-                        </div>
-                        <div class="flex justify-between p-3 bg-blue-50 rounded-lg">
-                            <span class="text-gray-600">Timestamp:</span>
-                            <span class="text-gray-800 font-semibold"><%= new java.util.Date() %></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Column -->
-            <div class="space-y-6">
                 
-                <!-- Tech Stack -->
-                <div class="bg-white rounded-xl shadow-lg p-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                        <i class="fas fa-layer-group text-indigo-600 mr-2"></i>
-                        Stack Technique
-                    </h2>
-                    <div class="space-y-2">
-                        <div class="flex items-center p-3 bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg">
-                            <i class="fab fa-java text-orange-600 text-xl mr-3"></i>
-                            <span class="font-semibold text-gray-700">Java 17</span>
-                        </div>
-                        <div class="flex items-center p-3 bg-gradient-to-r from-red-50 to-red-100 rounded-lg">
-                            <i class="fas fa-server text-red-600 text-xl mr-3"></i>
-                            <span class="font-semibold text-gray-700">Tomcat 10.1</span>
-                        </div>
-                        <div class="flex items-center p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-lg">
-                            <i class="fas fa-file-code text-green-600 text-xl mr-3"></i>
-                            <span class="font-semibold text-gray-700">JSP</span>
-                        </div>
-                        <div class="flex items-center p-3 bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-lg">
-                            <i class="fas fa-database text-yellow-600 text-xl mr-3"></i>
-                            <span class="font-semibold text-gray-700">Hibernate 7</span>
-                        </div>
-                        <div class="flex items-center p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg">
-                            <i class="fas fa-elephant text-blue-600 text-xl mr-3"></i>
-                            <span class="font-semibold text-gray-700">PostgreSQL 16</span>
-                        </div>
-                        <div class="flex items-center p-3 bg-gradient-to-r from-cyan-50 to-cyan-100 rounded-lg">
-                            <i class="fab fa-docker text-cyan-600 text-xl mr-3"></i>
-                            <span class="font-semibold text-gray-700">Docker</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Links -->
-                <div class="bg-white rounded-xl shadow-lg p-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                        <i class="fas fa-external-link-alt text-indigo-600 mr-2"></i>
-                        Liens Rapides
-                    </h2>
-                    <div class="space-y-2">
-                        <a href="register-doctor.jsp" class="block p-3 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 rounded-lg transition group border-2 border-blue-200">
-                            <div class="flex items-center justify-between">
-                                <span class="font-semibold text-blue-700 group-hover:text-blue-800 flex items-center">
-                                    <i class="fas fa-user-md mr-2"></i>
-                                    Inscription Docteur
-                                </span>
-                                <i class="fas fa-arrow-right text-blue-400 group-hover:text-blue-600"></i>
+                <!-- Contact Info -->
+                <div class="space-y-6">
+                    <div class="bg-gray-50 rounded-xl p-8">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-6">Informations de contact</h3>
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-map-marker-alt text-emerald-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-900 mb-1">Adresse</h4>
+                                    <p class="text-sm text-gray-600">123 Avenue Mohammed V<br/>Casablanca, Maroc</p>
+                                </div>
                             </div>
-                            <span class="text-xs text-blue-600">Créer un compte professionnel</span>
-                        </a>
-                        <a href="http://localhost:5051" target="_blank" class="block p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition group">
-                            <div class="flex items-center justify-between">
-                                <span class="font-semibold text-gray-700 group-hover:text-indigo-600">pgAdmin</span>
-                                <i class="fas fa-arrow-right text-gray-400 group-hover:text-indigo-600"></i>
+                            
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-phone text-teal-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-900 mb-1">Téléphone</h4>
+                                    <p class="text-sm text-gray-600">+212 522 123 456<br/>+212 661 234 567</p>
+                                </div>
                             </div>
-                            <span class="text-xs text-gray-500">Port 5051</span>
-                        </a>
-                        <a href="#" class="block p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition group">
-                            <div class="flex items-center justify-between">
-                                <span class="font-semibold text-gray-700 group-hover:text-indigo-600">Documentation</span>
-                                <i class="fas fa-arrow-right text-gray-400 group-hover:text-indigo-600"></i>
+                            
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-envelope text-cyan-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-900 mb-1">Email</h4>
+                                    <p class="text-sm text-gray-600">contact@ibnsina-hospital.ma<br/>urgences@ibnsina-hospital.ma</p>
+                                </div>
                             </div>
-                            <span class="text-xs text-gray-500">Guide complet</span>
-                        </a>
+                            
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-clock text-green-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-900 mb-1">Horaires</h4>
+                                    <p class="text-sm text-gray-600">Urgences: 24/7<br/>Consultations: Lun-Sam 8h-20h</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Footer -->
-    <footer class="bg-white shadow-lg mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div class="flex justify-between items-center">
-                <p class="text-gray-600">© 2025 Clinic JEE - Tous droits réservés</p>
-                <p class="text-sm text-gray-500">Créé avec <i class="fas fa-heart text-red-500"></i> | Powered by Jakarta EE</p>
+    <footer class="bg-gray-900 text-gray-300 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <!-- About -->
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-heartbeat text-white"></i>
+                        </div>
+                        <span class="font-semibold text-white text-lg">IBnSina</span>
+                    </div>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Excellence en soins de santé. Votre santé est notre priorité.
+                    </p>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="font-semibold text-white mb-4">Liens rapides</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-emerald-400 transition">À propos</a></li>
+                        <li><a href="#" class="hover:text-emerald-400 transition">Services</a></li>
+                        <li><a href="#" class="hover:text-emerald-400 transition">Spécialités</a></li>
+                        <li><a href="#" class="hover:text-emerald-400 transition">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Services -->
+                <div>
+                    <h3 class="font-semibold text-white mb-4">Services</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-emerald-400 transition">Consultations</a></li>
+                        <li><a href="#" class="hover:text-emerald-400 transition">Urgences</a></li>
+                        <li><a href="#" class="hover:text-emerald-400 transition">Laboratoire</a></li>
+                        <li><a href="#" class="hover:text-emerald-400 transition">Imagerie</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Social -->
+                <div>
+                    <h3 class="font-semibold text-white mb-4">Suivez-nous</h3>
+                    <div class="flex gap-3">
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-emerald-600 transition">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-teal-500 transition">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-600 transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-cyan-600 transition">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 text-center">
+                <p class="text-sm text-gray-400">
+                    &copy; 2025 IBnSina Hospital. Tous droits réservés.
+                </p>
             </div>
         </div>
     </footer>
-
 </body>
 </html>

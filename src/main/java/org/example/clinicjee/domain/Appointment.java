@@ -19,6 +19,10 @@ public class Appointment {
     private Long id;
     private LocalDate date;
     private LocalTime heure;
+    
+    @Column(nullable = false)
+    private Integer duree; // Durée en minutes
+    
     @Enumerated(EnumType.STRING)
     private StatutRendezVous statut;
     @Enumerated(EnumType.STRING)
@@ -43,10 +47,11 @@ public class Appointment {
     public Appointment() {
     }
 
-    public Appointment(Long id, LocalDate date, LocalTime heure, StatutRendezVous statut, TypeRendezVous type, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Appointment(Long id, LocalDate date, LocalTime heure, Integer duree, StatutRendezVous statut, TypeRendezVous type, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.date = date;
         this.heure = heure;
+        this.duree = duree;
         this.statut = statut;
         this.type = type;
         this.createdAt = createdAt;
@@ -76,6 +81,14 @@ public class Appointment {
 
     public void setHeure(LocalTime heure) {
         this.heure = heure;
+    }
+
+    public Integer getDuree() {
+        return duree;
+    }
+
+    public void setDuree(Integer duree) {
+        this.duree = duree;
     }
 
     public StatutRendezVous getStatut() {

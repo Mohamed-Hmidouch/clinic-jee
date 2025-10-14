@@ -5,8 +5,6 @@ import org.example.clinicjee.dto.request.RegisterRequest;
 import org.example.clinicjee.dto.response.AuthResponse;
 import org.example.clinicjee.repository.UserRepository;
 import org.example.clinicjee.repository.SpecialtyRepository;
-import org.example.clinicjee.repository.impl.UserRepositoryImpl;
-import org.example.clinicjee.repository.impl.SpecialtyRepositoryImpl;
 import org.example.clinicjee.util.PasswordUtil;
 import org.example.clinicjee.util.JwtUtil;
 import org.example.clinicjee.domain.*;
@@ -26,8 +24,8 @@ public class AuthService {
     private final SpecialtyRepository specialtyRepository;
 
     public AuthService() {
-        this.userRepository = new UserRepositoryImpl();
-        this.specialtyRepository = new SpecialtyRepositoryImpl();
+        this.userRepository = new UserRepository();
+        this.specialtyRepository = new SpecialtyRepository();
     }
 
     /**
