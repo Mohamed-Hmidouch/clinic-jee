@@ -32,5 +32,43 @@ public class AvailabilityRepository implements AvailabilityRepositoryInterface {
             em.close();
         }
     }
-    
+    public Availability save(Availability availability)
+    {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            if (availability.getId() == null) {
+                em.persist(availability);
+            } else {
+                availability = em.merge(availability);
+            }
+            em.getTransaction().commit();
+            return availability;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new RuntimeException("Erreur lors de la sauvegarde d'availivalty", e);
+        } finally {
+            em.close();
+        }  
+    }
+
+    public  Availability update(Availability availability)
+    {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            availability = em.merge(availability);
+            em.getTransaction().commit();
+            return availability;
+        } catch (Exception e) {
+            if(em.getTransaction().isActive()){
+                em.getTransaction().rollback();
+            }
+            throw new RuntimeException("Erreur lors de la sauvegarde d'availivalty", e);
+        }finally{
+            em.close();
+        }
+    }
 }

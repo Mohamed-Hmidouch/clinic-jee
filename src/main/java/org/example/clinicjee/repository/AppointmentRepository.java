@@ -174,4 +174,21 @@ public class AppointmentRepository implements AppointmentRepositoryInterface {
             em.close();
         }
     }
+
+    public List<Appointment> findByPatientId(Long id){
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            List<Appointment> appointments = em.createQuery(
+            "SELECT a FROM Appointment a WHERE a.patient.id = :patientId ORDER BY a.date DESC, a.heure DESC",
+            Appointment.class)
+            .setParameter("patientId", id)
+            .getResultList();
+            return appointments;
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la récupération des rendez-vous pour le patient avec l'id: " + id, e);
+        }finally{
+            em.close();
+        }
+    }
 }
