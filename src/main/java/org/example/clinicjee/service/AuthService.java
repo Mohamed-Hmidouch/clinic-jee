@@ -8,7 +8,6 @@ import org.example.clinicjee.repository.SpecialtyRepository;
 import org.example.clinicjee.util.PasswordUtil;
 import org.example.clinicjee.util.JwtUtil;
 import org.example.clinicjee.domain.*;
-import org.example.clinicjee.domain.enums.Role;
 import org.example.clinicjee.exception.AuthException;
 
 import java.util.Optional;

@@ -1,7 +1,5 @@
 package org.example.clinicjee.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class LoginRequest {
 
     private String email;

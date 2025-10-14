@@ -1,19 +1,16 @@
 package org.example.clinicjee.controller.web;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.example.clinicjee.domain.User;
 import org.example.clinicjee.domain.enums.Role;
-import org.example.clinicjee.dto.request.LoginRequest;
 import org.example.clinicjee.dto.request.RegisterRequest;
 import org.example.clinicjee.dto.response.AuthResponse;
 import org.example.clinicjee.service.AuthService;
-import org.example.clinicjee.exception.AuthException;
-import org.example.clinicjee.repository.UserRepository;
+
 
 import java.io.IOException;
 
@@ -21,7 +18,7 @@ import java.io.IOException;
  * Contrôleur web pour les pages d'authentification
  * Gère l'affichage des formulaires de connexion/inscription et le traitement
  */
-@WebServlet(urlPatterns = {"/auth/register", "/auth/logout"})
+// Deprecated: servlet annotation removed to avoid duplicate mappings. AuthServlet handles auth routes now.
 public class AuthWebController extends HttpServlet {
 
     private AuthService authService;
@@ -37,6 +34,9 @@ public class AuthWebController extends HttpServlet {
             throws ServletException, IOException {
         String path = request.getServletPath();
         switch (path) {
+            case "/auth/login":
+                showLoginForm(request, response);
+                break;
             case "/auth/register":
                 showRegisterForm(request, response);
                 break;
@@ -64,23 +64,6 @@ public class AuthWebController extends HttpServlet {
     }
 
     /**
-     * Affiche le formulaire de connexion
-     */
-    private void showLoginForm(HttpServletRequest request, HttpServletResponse response) 
-            throws ServletException, IOException {
-        
-        // Si l'utilisateur est déjà connecté, rediriger vers son dashboard
-        HttpSession session = request.getSession(false);
-        if (session != null && session.getAttribute("user") != null) {
-            User user = (User) session.getAttribute("user");
-            redirectToDashboard(response, user.getRole());
-            return;
-        }
-        
-        request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp").forward(request, response);
-    }
-
-    /**
      * Affiche le formulaire d'inscription
      */
     private void showRegisterForm(HttpServletRequest request, HttpServletResponse response)
@@ -94,6 +77,22 @@ public class AuthWebController extends HttpServlet {
         }
 
         request.getRequestDispatcher("/WEB-INF/views/auth/register.jsp").forward(request, response);
+    }
+
+    /**
+     * Affiche le formulaire de connexion
+     */
+    private void showLoginForm(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Si l'utilisateur est déjà connecté, rediriger vers son dashboard
+        HttpSession session = request.getSession(false);
+        if (session != null && session.getAttribute("user") != null) {
+            User user = (User) session.getAttribute("user");
+            redirectToDashboard(response, user.getRole());
+            return;
+        }
+
+        request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp").forward(request, response);
     }
 
     // Login is handled by AuthLoginPageServlet (GET) and AuthServlet (/api/auth/login) (POST)
