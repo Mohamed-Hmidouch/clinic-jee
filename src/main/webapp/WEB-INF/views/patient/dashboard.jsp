@@ -655,11 +655,87 @@
                           'Confirmez-vous ce rendez-vous?';
             
             if (confirm(summary)) {
-                // Here you would send the data to the backend
-                alert('Rendez-vous confirmé avec succès! Vous recevrez une confirmation par email.');
+                // DEBUG: Début de la création du rendez-vous
+                console.log('[DEBUG confirmAppointment] Début de la création du rendez-vous');
+                console.log('[DEBUG confirmAppointment] Patient ID:', <%= patient != null ? patient.getId() : "null" %>);
+                console.log('[DEBUG confirmAppointment] Doctor ID:', selectedDoctor.id);
+                console.log('[DEBUG confirmAppointment] Date:', selectedDate);
+                console.log('[DEBUG confirmAppointment] Heure:', selectedTime);
                 
-                // Reset form
-                resetBookingForm();
+                // ALERT DEBUG (temporaire)
+                alert('[DEBUG] Début création - PatientID: <%= patient != null ? patient.getId() : "null" %>, DoctorID: ' + selectedDoctor.id);
+                
+                // Désactiver le bouton pour éviter les doubles clics
+                const confirmBtn = document.getElementById('confirm-btn');
+                confirmBtn.disabled = true;
+                confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Création en cours...';
+                
+                // Préparer les paramètres de la requête
+                const params = new URLSearchParams();
+                params.append('action', 'create');
+                params.append('doctorId', selectedDoctor.id);
+                params.append('patientId', <%= patient != null ? patient.getId() : "0" %>);
+                params.append('date', selectedDate);
+                params.append('heure', selectedTime);
+                params.append('type', 'CONSULTATION');
+                
+                const apiUrl = '/api/patient/appointments?' + params.toString();
+                console.log('[DEBUG confirmAppointment] URL de l\'API:', apiUrl);
+                
+                // ALERT DEBUG (temporaire)
+                alert('[DEBUG] Envoi requête POST vers: ' + apiUrl);
+                
+                // Envoyer la requête POST au backend
+                fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+                .then(function(response) {
+                    console.log('[DEBUG confirmAppointment] Réponse HTTP:', response.status);
+                    
+                    // ALERT DEBUG (temporaire)
+                    alert('[DEBUG] Réponse reçue avec status: ' + response.status);
+                    
+                    if (!response.ok) {
+                        throw new Error('Erreur HTTP: ' + response.status);
+                    }
+                    
+                    return response.json();
+                })
+                .then(function(data) {
+                    console.log('[DEBUG confirmAppointment] Données reçues:', data);
+                    
+                    // ALERT DEBUG (temporaire)
+                    alert('[DEBUG] Données JSON: ' + JSON.stringify(data));
+                    
+                    if (data.success) {
+                        console.log('[DEBUG confirmAppointment] Rendez-vous créé avec ID:', data.appointmentId);
+                        alert('Rendez-vous confirmé avec succès! Vous recevrez une confirmation par email.');
+                        
+                        // Reset form
+                        resetBookingForm();
+                    } else {
+                        console.error('[DEBUG confirmAppointment] Erreur:', data.error);
+                        alert('Erreur lors de la création du rendez-vous: ' + data.error);
+                        
+                        // Réactiver le bouton
+                        confirmBtn.disabled = false;
+                        confirmBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Confirmer le Rendez-vous';
+                    }
+                })
+                .catch(function(error) {
+                    console.error('[DEBUG confirmAppointment] ERREUR CATCH:', error);
+                    
+                    // ALERT DEBUG (temporaire)
+                    alert('[DEBUG] ERREUR CATCH: ' + error.message);
+                    alert('Erreur lors de la création du rendez-vous: ' + error.message);
+                    
+                    // Réactiver le bouton
+                    confirmBtn.disabled = false;
+                    confirmBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Confirmer le Rendez-vous';
+                });
             }
         }
         

@@ -16,7 +16,7 @@ public class PatientRepository {
 
         try {
             Patient patient = em.createQuery(
-                "SELECT p FROM Patient p JOIN FETCH p.user u WHERE p.id = :patientId", Patient.class)
+                "SELECT p FROM Patient p WHERE p.id = :patientId", Patient.class)
                 .setParameter("patientId", patientId)
                 .getSingleResult();
             return Optional.of(patient);

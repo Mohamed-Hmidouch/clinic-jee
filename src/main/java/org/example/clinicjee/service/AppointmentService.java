@@ -122,7 +122,7 @@ public class AppointmentService {
     // Vérifier si un créneau est disponible
     public boolean isCreneauDisponible(Long doctorId, LocalDate date, LocalTime heure, TypeRendezVous type) {
         // 1️⃣ Vérifier que le docteur travaille ce jour
-        JourSemaine jour = JourSemaine.valueOf(date.getDayOfWeek().name());
+        JourSemaine jour = convertDayOfWeek(date.getDayOfWeek());
         Optional<Availability> optAvail = availabilityRepository.findByDoctorIdAndJour(doctorId, jour);
 
         if (optAvail.isEmpty()) {
