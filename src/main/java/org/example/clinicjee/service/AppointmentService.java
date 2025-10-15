@@ -60,15 +60,17 @@ public class AppointmentService {
 
         LocalTime current = heureDebut;
         while (current.isBefore(heureFin)) {
-            final LocalTime slot = current; // temporaire final pour lambda
+            final LocalTime slot = current;
             boolean isTaken = appointments.stream()
-                    .anyMatch(a -> a.getHeure().equals(slot));
+                .anyMatch(a -> a.getHeure().equals(slot));
 
             if (!isTaken) {
                 creneauxDisponibles.add(new CreneauDTO(slot, true));
+                current = current.plusMinutes(30);
+            } else {
+                // Sauter ce créneau + le suivant (60min)
+                current = current.plusMinutes(60);
             }
-
-            current = current.plusMinutes(30);
         }
 
         return creneauxDisponibles;
