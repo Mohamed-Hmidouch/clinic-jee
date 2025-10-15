@@ -17,16 +17,16 @@ public class AvailabilityRepository implements AvailabilityRepositoryInterface {
 
     @Override
     public Optional<Availability> findByDoctorIdAndJour(Long doctorId, JourSemaine jour) {
-        // TODO: implement with JPA or JDBC. Suggested SQL pseudocode:
         EntityManager em = JPAUtil.getEntityManager();
         try{
-            List<Availability> availabilities = em.createQuery("SELECT a FROM Availability a WHERE a.doctor_id = :doctorId AND a.jour = :jour LIMIT 1",Availability.class)
-            .setParameter("doctor_id",doctorId)
+            List<Availability> availabilities = em.createQuery("SELECT a FROM Availability a WHERE a.doctor.id = :doctorId AND a.jour = :jour",Availability.class)
+            .setParameter("doctorId",doctorId)
             .setParameter("jour", jour)
+            .setMaxResults(1)
             .getResultList();
-            /// returner un optional de la liste availabilty avec la premier elemnt de la list
-            return Optional.of(availabilities.get(0));
+            return availabilities.isEmpty() ? Optional.empty() : Optional.of(availabilities.get(0));
         }catch(Exception e){
+            e.printStackTrace();
             return Optional.empty();
         }finally{
             em.close();

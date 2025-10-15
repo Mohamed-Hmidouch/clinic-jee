@@ -339,31 +339,30 @@
         };
         
         // Données statiques pour les médecins par spécialité
+        // NOTE: Les IDs correspondent aux IDs réels dans la base de données
         const specialtyDoctors = {
             1: [
-                { id: 101, name: 'Dr. Ahmed Benali', experience: '15 ans', rating: 4.8, image: 'fa-user-md', available: true },
-                { id: 102, name: 'Dr. Fatima Alaoui', experience: '12 ans', rating: 4.9, image: 'fa-user-md', available: true },
-                { id: 103, name: 'Dr. Hassan Idrissi', experience: '8 ans', rating: 4.7, image: 'fa-user-md', available: true }
+                { id: 2, name: 'Dr. Ahmed Benali', experience: '15 ans', rating: 4.8, image: 'fa-user-md', available: true },
+                { id: 3, name: 'Dr. Fatima Alaoui', experience: '12 ans', rating: 4.9, image: 'fa-user-md', available: true }
+            ],
+            3: [
+                { id: 4, name: 'Dr. Hassan Idrissi', experience: '8 ans', rating: 4.7, image: 'fa-user-md', available: true }
             ],
             4: [
-                { id: 104, name: 'Dr. Mohammed Tazi', experience: '20 ans', rating: 4.9, image: 'fa-user-md', available: true },
-                { id: 105, name: 'Dr. Salma Ouazzani', experience: '18 ans', rating: 4.8, image: 'fa-user-md', available: true }
+                { id: 2, name: 'Dr. Ahmed Benali', experience: '15 ans', rating: 4.8, image: 'fa-user-md', available: true },
+                { id: 3, name: 'Dr. Fatima Alaoui', experience: '12 ans', rating: 4.9, image: 'fa-user-md', available: true }
             ],
             7: [
-                { id: 106, name: 'Dr. Amina Bennis', experience: '14 ans', rating: 4.9, image: 'fa-user-md', available: true },
-                { id: 107, name: 'Dr. Karim Benjelloun', experience: '10 ans', rating: 4.7, image: 'fa-user-md', available: true }
+                { id: 2, name: 'Dr. Ahmed Benali', experience: '15 ans', rating: 4.8, image: 'fa-user-md', available: true }
             ],
             10: [
-                { id: 108, name: 'Dr. Rachid Lahlou', experience: '22 ans', rating: 4.9, image: 'fa-user-md', available: true },
-                { id: 109, name: 'Dr. Leila Fassi', experience: '16 ans', rating: 4.8, image: 'fa-user-md', available: true }
+                { id: 3, name: 'Dr. Fatima Alaoui', experience: '12 ans', rating: 4.9, image: 'fa-user-md', available: true }
             ],
             13: [
-                { id: 110, name: 'Dr. Youssef Chraibi', experience: '19 ans', rating: 4.8, image: 'fa-user-md', available: true },
-                { id: 111, name: 'Dr. Nadia Lamrani', experience: '13 ans', rating: 4.7, image: 'fa-user-md', available: true }
+                { id: 4, name: 'Dr. Hassan Idrissi', experience: '8 ans', rating: 4.7, image: 'fa-user-md', available: true }
             ],
             16: [
-                { id: 112, name: 'Dr. Omar Fakhri', experience: '11 ans', rating: 4.8, image: 'fa-user-md', available: true },
-                { id: 113, name: 'Dr. Samira Kettani', experience: '9 ans', rating: 4.9, image: 'fa-user-md', available: true }
+                { id: 2, name: 'Dr. Ahmed Benali', experience: '15 ans', rating: 4.8, image: 'fa-user-md', available: true }
             ]
         };
         
@@ -453,7 +452,14 @@
         }
         
         function selectDoctor(doctorId, doctorName) {
+            // DEBUG: Vérifier la sélection du docteur
+            console.log('[DEBUG selectDoctor] ID du docteur sélectionné:', doctorId);
+            console.log('[DEBUG selectDoctor] Nom du docteur sélectionné:', doctorName);
+            
             selectedDoctor = { id: doctorId, name: doctorName };
+            
+            console.log('[DEBUG selectDoctor] selectedDoctor après assignation:', selectedDoctor);
+            
             initializeCalendar();
             goToStep(4);
         }
@@ -531,7 +537,13 @@
         }
         
         function selectDate(dateString) {
+            // DEBUG: Vérifier la sélection de la date
+            console.log('[DEBUG selectDate] Date sélectionnée:', dateString);
+            
             selectedDate = dateString;
+            
+            console.log('[DEBUG selectDate] selectedDate après assignation:', selectedDate);
+            
             renderCalendar();
             displayTimeSlots();
         }
@@ -539,7 +551,13 @@
         function displayTimeSlots() {
             const container = document.getElementById('time-slots-container');
             
+            // DEBUG 1: Vérifier si le médecin et la date sont sélectionnés
+            console.log('[DEBUG 1] Début displayTimeSlots()');
+            console.log('[DEBUG 1] selectedDoctor:', selectedDoctor);
+            console.log('[DEBUG 1] selectedDate:', selectedDate);
+            
             if (!selectedDoctor || !selectedDate) {
+                console.log('[DEBUG 1] ERREUR: Médecin ou date manquant');
                 container.innerHTML = '<p class="text-gray-500 text-center py-8">Veuillez sélectionner un médecin et une date</p>';
                 return;
             }
@@ -547,29 +565,63 @@
             // Show loading
             container.innerHTML = '<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-emerald-600 text-2xl"></i><p class="text-gray-600 mt-2">Chargement des créneaux...</p></div>';
             
+            // DEBUG 2: Construire l'URL de l'API
+            const apiUrl = '/api/patient/appointments?action=creneauxDisponibles&doctorId=' + encodeURIComponent(selectedDoctor.id) + '&date=' + encodeURIComponent(selectedDate);
+            console.log('[DEBUG 2] URL de l\'API:', apiUrl);
+            
             // Fetch available time slots via AJAX from API
-            fetch('/clinic-jee/api/patient/appointments?action=creneauxDisponibles&doctorId=' + encodeURIComponent(selectedDoctor.id) + '&date=' + encodeURIComponent(selectedDate))
+            fetch(apiUrl)
             .then(function(response) {
+                // DEBUG 3: Vérifier la réponse HTTP
+                console.log('[DEBUG 3] Réponse HTTP reçue');
+                console.log('[DEBUG 3] Status:', response.status);
+                console.log('[DEBUG 3] StatusText:', response.statusText);
+                console.log('[DEBUG 3] OK:', response.ok);
+                
+                if (!response.ok) {
+                    console.log('[DEBUG 3] ERREUR: Réponse HTTP non OK');
+                    throw new Error('Erreur HTTP: ' + response.status);
+                }
+                
                 return response.json();
             })
             .then(function(data) {
+                // DEBUG 4: Vérifier les données JSON reçues
+                console.log('[DEBUG 4] Données JSON reçues:', data);
+                console.log('[DEBUG 4] data.success:', data.success);
+                console.log('[DEBUG 4] data.availabilities:', data.availabilities);
+                console.log('[DEBUG 4] Nombre de créneaux:', data.availabilities ? data.availabilities.length : 0);
+                
                 if (data.success && data.availabilities && data.availabilities.length > 0) {
+                    // DEBUG 5: Créneaux disponibles trouvés
+                    console.log('[DEBUG 5] Affichage de', data.availabilities.length, 'créneaux');
+                    
                     container.innerHTML = '<div class="grid grid-cols-2 md:grid-cols-3 gap-3">' +
                         data.availabilities.map(function(slot) {
                             var time = slot.heure;
+                            console.log('[DEBUG 5] Créneau:', time);
                             var className = 'time-slot p-3 text-center border-2 border-gray-200 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 cursor-pointer transition';
                             return '<button class="' + className + '" onclick="selectTime(\'' + time + '\')">' +
                                    '<i class="fas fa-clock text-emerald-600 mr-2"></i>' + time +
                                    '</button>';
                         }).join('') +
                         '</div>';
+                    
+                    console.log('[DEBUG 5] Créneaux affichés avec succès');
                 } else {
+                    // DEBUG 6: Aucun créneau disponible
+                    console.log('[DEBUG 6] Aucun créneau disponible');
+                    console.log('[DEBUG 6] Raison: success=' + data.success + ', availabilities existe=' + (!!data.availabilities) + ', length=' + (data.availabilities ? data.availabilities.length : 0));
                     container.innerHTML = '<p class="text-gray-500 text-center py-8">Aucun créneau disponible pour cette date</p>';
                 }
             })
             .catch(function(error) {
-                console.error('Error fetching availabilities:', error);
-                container.innerHTML = '<p class="text-red-500 text-center py-8">Erreur lors du chargement des créneaux</p>';
+                // DEBUG 7: Erreur lors de la requête
+                console.error('[DEBUG 7] ERREUR CATCH:', error);
+                console.error('[DEBUG 7] Type d\'erreur:', error.name);
+                console.error('[DEBUG 7] Message d\'erreur:', error.message);
+                console.error('[DEBUG 7] Stack trace:', error.stack);
+                container.innerHTML = '<p class="text-red-500 text-center py-8">Erreur lors du chargement des créneaux: ' + error.message + '</p>';
             });
         }
         
