@@ -10,6 +10,7 @@ import org.example.clinicjee.dto.response.CreneauDTO;
 import org.example.clinicjee.repository.AppointmentRepository;
 import org.example.clinicjee.repository.PatientRepository;
 import org.example.clinicjee.repository.AvailabilityRepository;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -28,10 +29,24 @@ public class AppointmentService {
         this.availabilityRepository = availabilityRepository;
     }
 
+    // Convertir DayOfWeek (MONDAY, etc.) en JourSemaine (LUNDI, etc.)
+    private JourSemaine convertDayOfWeek(DayOfWeek dayOfWeek) {
+        switch (dayOfWeek) {
+            case MONDAY: return JourSemaine.LUNDI;
+            case TUESDAY: return JourSemaine.MARDI;
+            case WEDNESDAY: return JourSemaine.MERCREDI;
+            case THURSDAY: return JourSemaine.JEUDI;
+            case FRIDAY: return JourSemaine.VENDREDI;
+            case SATURDAY: return JourSemaine.SAMEDI;
+            case SUNDAY: return JourSemaine.DIMANCHE;
+            default: throw new IllegalArgumentException("Jour invalide: " + dayOfWeek);
+        }
+    }
+
     // Récupérer les créneaux disponibles pour un docteur à une date donnée
     public List<CreneauDTO> getCreneauxDisponibles(Long doctorId, LocalDate date) {
         List<CreneauDTO> creneauxDisponibles = new ArrayList<>();
-        JourSemaine jour = JourSemaine.valueOf(date.getDayOfWeek().name());
+        JourSemaine jour = convertDayOfWeek(date.getDayOfWeek());
         Optional<Availability> optAvail = availabilityRepository.findByDoctorIdAndJour(doctorId, jour);
 
         if (optAvail.isEmpty()) {

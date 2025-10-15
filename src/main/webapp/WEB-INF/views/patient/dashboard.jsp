@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="org.example.clinicjee.domain.Patient" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -40,6 +42,10 @@
         </div>
     </nav>
 
+    <%
+        Patient patient = (Patient) request.getAttribute("patient");
+    %>
+
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 class="text-3xl font-bold text-gray-900 mb-8">Bienvenue sur votre Dashboard Patient</h1>
@@ -51,7 +57,7 @@
                     <i class="fas fa-user-circle text-emerald-600 text-3xl"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-900">Bienvenue!</h2>
+                    <h2 class="text-2xl font-bold text-gray-900">Bienvenue <%= patient != null ? patient.getFullName() : "" %>!</h2>
                     <p class="text-gray-600">Gérez vos rendez-vous médicaux facilement</p>
                 </div>
             </div>
@@ -251,6 +257,7 @@
                 <div class="text-center py-12">
                     <i class="fas fa-calendar-alt text-gray-300 text-6xl mb-4"></i>
                     <p class="text-gray-500">Aucun rendez-vous prévu</p>
+                    <p class="text-sm text-gray-400 mt-2">(Utilisez l'API pour charger les rendez-vous)</p>
                 </div>
             </div>
         </section>
@@ -275,7 +282,10 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="5" class="text-center py-8 text-gray-500">Aucun historique disponible</td>
+                                <td colspan="5" class="text-center py-8 text-gray-500">
+                                    Aucun historique disponible
+                                    <p class="text-sm text-gray-400 mt-2">(Utilisez l'API pour charger l'historique)</p>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -529,14 +539,38 @@
         function displayTimeSlots() {
             const container = document.getElementById('time-slots-container');
             
-            container.innerHTML = '<div class="grid grid-cols-2 md:grid-cols-3 gap-3">' +
-                timeSlots.map(function(time) {
-                    const className = 'time-slot p-3 text-center border-2 border-gray-200 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 cursor-pointer transition';
-                    return '<button class="' + className + '" onclick="selectTime(\'' + time + '\')">' +
-                           '<i class="fas fa-clock text-emerald-600 mr-2"></i>' + time +
-                           '</button>';
-                }).join('') +
-                '</div>';
+            if (!selectedDoctor || !selectedDate) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-8">Veuillez sélectionner un médecin et une date</p>';
+                return;
+            }
+            
+            // Show loading
+            container.innerHTML = '<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-emerald-600 text-2xl"></i><p class="text-gray-600 mt-2">Chargement des créneaux...</p></div>';
+            
+            // Fetch available time slots via AJAX from API
+            fetch('/clinic-jee/api/patient/appointments?action=creneauxDisponibles&doctorId=' + encodeURIComponent(selectedDoctor.id) + '&date=' + encodeURIComponent(selectedDate))
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success && data.availabilities && data.availabilities.length > 0) {
+                    container.innerHTML = '<div class="grid grid-cols-2 md:grid-cols-3 gap-3">' +
+                        data.availabilities.map(function(slot) {
+                            var time = slot.heure;
+                            var className = 'time-slot p-3 text-center border-2 border-gray-200 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 cursor-pointer transition';
+                            return '<button class="' + className + '" onclick="selectTime(\'' + time + '\')">' +
+                                   '<i class="fas fa-clock text-emerald-600 mr-2"></i>' + time +
+                                   '</button>';
+                        }).join('') +
+                        '</div>';
+                } else {
+                    container.innerHTML = '<p class="text-gray-500 text-center py-8">Aucun créneau disponible pour cette date</p>';
+                }
+            })
+            .catch(function(error) {
+                console.error('Error fetching availabilities:', error);
+                container.innerHTML = '<p class="text-red-500 text-center py-8">Erreur lors du chargement des créneaux</p>';
+            });
         }
         
         function selectTime(time) {
