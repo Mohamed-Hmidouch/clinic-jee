@@ -203,6 +203,45 @@ public class AppointmentService {
         // { id: 1, doctorId: 5, date: 2025-10-15, heure: 11:30, statut: TERMINE }
         // ]
     }
+    
+    // Récupérer les rendez-vous planifiés d'un patient (statut PLANIFIE uniquement)
+    public List<Appointment> getPlannedAppointmentsByPatient(Long patientId) {
+        // 1️⃣ Vérifier que le patient existe
+        Optional<Patient> optPatient = patientRepository.findById(patientId);
+        if (optPatient.isEmpty()) {
+            throw new RuntimeException("Patient non trouvé avec l'ID: " + patientId);
+        }
+
+        // 2️⃣ Récupérer uniquement les rendez-vous planifiés (pas encore terminés, ni annulés)
+        return appointmentRepository.findByPatientIdAndStatus(patientId, StatutRendezVous.PLANIFIE);
+    }
+    
+    /**
+     * Récupérer les rendez-vous d'un patient avec pagination
+     * @param patientId ID du patient
+     * @param status Statut des rendez-vous (peut être null pour tous)
+     * @param page Numéro de page (commence à 0)
+     * @param pageSize Nombre d'éléments par page
+     * @return Liste paginée des rendez-vous
+     */
+    public List<Appointment> getAppointmentsByPatientPaginated(
+            Long patientId, StatutRendezVous status, int page, int pageSize) {
+        // Vérifier que le patient existe
+        Optional<Patient> optPatient = patientRepository.findById(patientId);
+        if (optPatient.isEmpty()) {
+            throw new RuntimeException("Patient non trouvé avec l'ID: " + patientId);
+        }
+        
+        return appointmentRepository.findByPatientIdAndStatusWithPagination(
+            patientId, status, page, pageSize);
+    }
+    
+    /**
+     * Compter le nombre total de rendez-vous
+     */
+    public long countAppointmentsByPatient(Long patientId, StatutRendezVous status) {
+        return appointmentRepository.countByPatientIdAndStatus(patientId, status);
+    }
 
     // Mettre à jour le statut d'un rendez-vous
     public Appointment updateAppointmentStatus(Long appointmentId, StatutRendezVous newStatut) {

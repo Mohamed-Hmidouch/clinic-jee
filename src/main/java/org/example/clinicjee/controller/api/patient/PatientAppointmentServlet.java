@@ -3,6 +3,7 @@ package org.example.clinicjee.controller.api.patient;
 import org.example.clinicjee.domain.Appointment;
 import org.example.clinicjee.domain.Doctor;
 import org.example.clinicjee.domain.Patient;
+import org.example.clinicjee.domain.enums.StatutRendezVous;
 import org.example.clinicjee.dto.response.CreneauDTO;
 import org.example.clinicjee.service.AppointmentService;
 import org.example.clinicjee.repository.AppointmentRepository;
@@ -62,13 +63,89 @@ public class PatientAppointmentServlet extends HttpServlet {
                 resp.getWriter().write("{\"success\": false, \"error\": \"" + e.getMessage() + "\"}");
             }
         } else if ("byPatient".equals(action)) {
-            // ?action=byPatient&patientId=...
+            // ?action=byPatient&patientId=...&status=PLANIFIE&page=0&pageSize=3 (optionnel)
             try {
                 Long patientId = Long.valueOf(req.getParameter("patientId"));
-                List<Appointment> appts = appointmentService.getAppointmentsByPatient(patientId);
+                String statusParam = req.getParameter("status");
+                String pageParam = req.getParameter("page");
+                String pageSizeParam = req.getParameter("pageSize");
+                
+                // Déterminer si on utilise la pagination
+                boolean usePagination = pageParam != null || pageSizeParam != null;
+                int page = pageParam != null ? Integer.parseInt(pageParam) : 0;
+                int pageSize = pageSizeParam != null ? Integer.parseInt(pageSizeParam) : 3;  // Défaut: 3 par page
+                
+                StatutRendezVous status = null;
+                if ("PLANIFIE".equals(statusParam)) {
+                    status = StatutRendezVous.PLANIFIE;
+                } else if ("TERMINE".equals(statusParam)) {
+                    status = StatutRendezVous.TERMINE;
+                } else if ("ANNULE".equals(statusParam)) {
+                    status = StatutRendezVous.ANNULE;
+                } else if ("CONFIRME".equals(statusParam)) {
+                    status = StatutRendezVous.CONFIRME;
+                }
+                
+                List<Appointment> appts;
+                long totalCount = 0;
+                
+                if (usePagination) {
+                    // Récupération paginée
+                    appts = appointmentService.getAppointmentsByPatientPaginated(patientId, status, page, pageSize);
+                    totalCount = appointmentService.countAppointmentsByPatient(patientId, status);
+                } else {
+                    // Récupération normale (sans pagination)
+                    if (status == StatutRendezVous.PLANIFIE) {
+                        appts = appointmentService.getPlannedAppointmentsByPatient(patientId);
+                    } else {
+                        appts = appointmentService.getAppointmentsByPatient(patientId);
+                    }
+                }
+                
+                // Construire JSON manuellement
+                StringBuilder json = new StringBuilder("{\"success\": true");
+                
+                if (usePagination) {
+                    long totalPages = (totalCount + pageSize - 1) / pageSize;
+                    json.append(",\"pagination\": {");
+                    json.append("\"currentPage\": ").append(page).append(",");
+                    json.append("\"pageSize\": ").append(pageSize).append(",");
+                    json.append("\"totalItems\": ").append(totalCount).append(",");
+                    json.append("\"totalPages\": ").append(totalPages).append(",");
+                    json.append("\"hasNext\": ").append(page < totalPages - 1).append(",");
+                    json.append("\"hasPrevious\": ").append(page > 0);
+                    json.append("}");
+                }
+                
+                json.append(", \"appointments\": [");
+                boolean first = true;
+                for (Appointment apt : appts) {
+                    if (!first) json.append(",");
+                    json.append("{");
+                    json.append("\"id\": ").append(apt.getId()).append(",");
+                    json.append("\"date\": \"").append(apt.getDate()).append("\",");
+                    json.append("\"heure\": \"").append(apt.getHeure()).append("\",");
+                    json.append("\"type\": \"").append(apt.getType()).append("\",");
+                    json.append("\"statut\": \"").append(apt.getStatut()).append("\",");
+                    
+                    // Ajouter les infos du docteur
+                    Doctor doctor = apt.getDoctor();
+                    json.append("\"doctor\": {");
+                    json.append("\"id\": ").append(doctor.getId()).append(",");
+                    json.append("\"nom\": \"").append(escapeJson(doctor.getFullName())).append("\",");
+                    json.append("\"titre\": \"").append(escapeJson(doctor.getTitre())).append("\"");
+                    if (doctor.getSpecialite() != null) {
+                        json.append(",\"specialite\": \"").append(escapeJson(doctor.getSpecialite().getNom())).append("\"");
+                    }
+                    json.append("}");
+                    json.append("}");
+                    first = false;
+                }
+                json.append("]}");
+                
                 resp.setContentType("application/json");
                 resp.setCharacterEncoding("UTF-8");
-                resp.getWriter().write(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(appts));
+                resp.getWriter().write(json.toString());
             } catch (Exception e) {
                 resp.setContentType("application/json");
                 resp.getWriter().write("{\"success\": false, \"error\": \"" + e.getMessage() + "\"}");
@@ -76,6 +153,14 @@ public class PatientAppointmentServlet extends HttpServlet {
         } else {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action inconnue");
         }
+    }
+    
+    private String escapeJson(String text) {
+        if (text == null) return "";
+        return text.replace("\\", "\\\\")
+                   .replace("\"", "\\\"")
+                   .replace("\n", "\\n")
+                   .replace("\r", "\\r");
     }
 
     @Override

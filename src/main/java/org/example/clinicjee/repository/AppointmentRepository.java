@@ -191,4 +191,129 @@ public class AppointmentRepository implements AppointmentRepositoryInterface {
             em.close();
         }
     }
+    
+    /**
+     * Récupère les rendez-vous d'un patient filtrés par statut
+     * Charge complètement doctor et specialty pour éviter lazy loading
+     */
+    public List<Appointment> findByPatientIdAndStatus(Long patientId, StatutRendezVous status){
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            // Charger toutes les relations nécessaires avec JOIN FETCH
+            List<Appointment> appointments = em.createQuery(
+            "SELECT DISTINCT a FROM Appointment a " +
+            "JOIN FETCH a.doctor d " +
+            "LEFT JOIN FETCH d.specialite " +
+            "WHERE a.patient.id = :patientId AND a.statut = :status " +
+            "ORDER BY a.date ASC, a.heure ASC",
+            Appointment.class)
+            .setParameter("patientId", patientId)
+            .setParameter("status", status)
+            .getResultList();
+            
+            // Forcer l'initialisation des propriétés lazy de User (parent de Doctor)
+            for (Appointment apt : appointments) {
+                if (apt.getDoctor() != null) {
+                    // Accès aux propriétés pour forcer le chargement
+                    apt.getDoctor().getFullName();
+                    apt.getDoctor().getTitre();
+                    if (apt.getDoctor().getSpecialite() != null) {
+                        apt.getDoctor().getSpecialite().getNom();
+                    }
+                }
+            }
+            
+            return appointments;
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la récupération des rendez-vous planifiés pour le patient avec l'id: " + patientId, e);
+        }finally{
+            em.close();
+        }
+    }
+    
+    /**
+     * Récupère les rendez-vous d'un patient avec pagination
+     * @param patientId ID du patient
+     * @param status Statut des rendez-vous (peut être null pour tous)
+     * @param page Numéro de page (commence à 0)
+     * @param pageSize Nombre d'éléments par page
+     * @return Liste paginée des rendez-vous
+     */
+    public List<Appointment> findByPatientIdAndStatusWithPagination(
+            Long patientId, StatutRendezVous status, int page, int pageSize) {
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            String jpql = "SELECT DISTINCT a FROM Appointment a " +
+                         "JOIN FETCH a.doctor d " +
+                         "LEFT JOIN FETCH d.specialite " +
+                         "WHERE a.patient.id = :patientId ";
+            
+            if (status != null) {
+                jpql += "AND a.statut = :status ";
+            }
+            
+            jpql += "ORDER BY a.date DESC, a.heure DESC";
+            
+            var query = em.createQuery(jpql, Appointment.class)
+                         .setParameter("patientId", patientId)
+                         .setFirstResult(page * pageSize)  // Offset
+                         .setMaxResults(pageSize);         // Limit
+            
+            if (status != null) {
+                query.setParameter("status", status);
+            }
+            
+            List<Appointment> appointments = query.getResultList();
+            
+            // Forcer l'initialisation
+            for (Appointment apt : appointments) {
+                if (apt.getDoctor() != null) {
+                    apt.getDoctor().getFullName();
+                    apt.getDoctor().getTitre();
+                    if (apt.getDoctor().getSpecialite() != null) {
+                        apt.getDoctor().getSpecialite().getNom();
+                    }
+                }
+            }
+            
+            return appointments;
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la récupération paginée des rendez-vous", e);
+        } finally {
+            em.close();
+        }
+    }
+    
+    /**
+     * Compte le nombre total de rendez-vous d'un patient
+     * @param patientId ID du patient
+     * @param status Statut des rendez-vous (peut être null pour tous)
+     * @return Nombre total de rendez-vous
+     */
+    public long countByPatientIdAndStatus(Long patientId, StatutRendezVous status) {
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            String jpql = "SELECT COUNT(a) FROM Appointment a WHERE a.patient.id = :patientId";
+            
+            if (status != null) {
+                jpql += " AND a.statut = :status";
+            }
+            
+            var query = em.createQuery(jpql, Long.class)
+                         .setParameter("patientId", patientId);
+            
+            if (status != null) {
+                query.setParameter("status", status);
+            }
+            
+            return query.getSingleResult();
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors du comptage des rendez-vous", e);
+        } finally {
+            em.close();
+        }
+    }
 }

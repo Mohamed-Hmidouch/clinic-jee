@@ -254,10 +254,11 @@
                     <i class="fas fa-calendar-check text-emerald-600 mr-2"></i>Mes Rendez-vous
                 </h2>
                 
-                <div class="text-center py-12">
-                    <i class="fas fa-calendar-alt text-gray-300 text-6xl mb-4"></i>
-                    <p class="text-gray-500">Aucun rendez-vous prévu</p>
-                    <p class="text-sm text-gray-400 mt-2">(Utilisez l'API pour charger les rendez-vous)</p>
+                <div id="appointments-container">
+                    <div class="text-center py-12">
+                        <i class="fas fa-spinner fa-spin text-emerald-500 text-6xl mb-4"></i>
+                        <p class="text-gray-500">Chargement des rendez-vous...</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -373,6 +374,146 @@
             }
             return [];
         }
+        
+        // Charger les rendez-vous planifiés du patient avec pagination
+        let currentPage = 0;
+        let allAppointments = [];
+        let hasMoreAppointments = true;
+        const pageSize = 3;
+        
+        async function loadPlannedAppointments() {
+            try {
+                const patientId = <%= patient != null ? patient.getId() : "null" %>;
+                if (!patientId) {
+                    console.error('Patient ID non disponible');
+                    return;
+                }
+                
+                // Charger la première page
+                await loadMoreAppointments();
+            } catch (error) {
+                console.error('Erreur lors du chargement des rendez-vous:', error);
+                document.getElementById('appointments-container').innerHTML = 
+                    '<div class="text-center py-12 text-red-500">' +
+                    '<i class="fas fa-exclamation-triangle text-red-300 text-6xl mb-4"></i>' +
+                    '<p>Erreur lors du chargement des rendez-vous</p>' +
+                    '</div>';
+            }
+        }
+        
+        async function loadMoreAppointments() {
+            try {
+                const patientId = <%= patient != null ? patient.getId() : "null" %>;
+                
+                // Afficher l'indicateur de chargement sur le bouton
+                const container = document.getElementById('appointments-container');
+                const loadButton = container.querySelector('button[onclick="loadMoreAppointments()"]');
+                if (loadButton) {
+                    loadButton.disabled = true;
+                    loadButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Chargement...';
+                }
+                
+                const response = await fetch('/api/patient/appointments?action=byPatient&patientId=' + patientId + 
+                    '&status=PLANIFIE&page=' + currentPage + '&pageSize=' + pageSize);
+                const data = await response.json();
+                
+                if (data.success && data.appointments) {
+                    allAppointments = allAppointments.concat(data.appointments);
+                    
+                    // Mettre à jour les infos de pagination
+                    if (data.pagination) {
+                        hasMoreAppointments = data.pagination.hasNext;
+                        currentPage++;
+                    } else {
+                        hasMoreAppointments = false;
+                    }
+                    
+                    displayPlannedAppointments(allAppointments);
+                } else {
+                    document.getElementById('appointments-container').innerHTML = 
+                        '<div class="text-center py-12">' +
+                        '<i class="fas fa-calendar-alt text-gray-300 text-6xl mb-4"></i>' +
+                        '<p class="text-gray-500">Aucun rendez-vous planifié</p>' +
+                        '</div>';
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des rendez-vous:', error);
+            }
+        }
+        
+        // Afficher les rendez-vous planifiés
+        function displayPlannedAppointments(appointments) {
+            const container = document.getElementById('appointments-container');
+            
+            if (appointments.length === 0) {
+                container.innerHTML = 
+                    '<div class="text-center py-12">' +
+                    '<i class="fas fa-calendar-alt text-gray-300 text-6xl mb-4"></i>' +
+                    '<p class="text-gray-500">Aucun rendez-vous planifié</p>' +
+                    '</div>';
+                return;
+            }
+            
+            let html = '<div id="appointments-list">';
+            
+            appointments.forEach(function(apt) {
+                const date = new Date(apt.date);
+                const dateStr = date.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                
+                html += '<div class="bg-gradient-to-r from-emerald-50 to-teal-50 border-l-4 border-emerald-500 rounded-lg p-6 mb-4 hover:shadow-lg transition">' +
+                    '<div class="flex items-start justify-between">' +
+                    '<div class="flex-1">' +
+                    '<div class="flex items-center gap-3 mb-3">' +
+                    '<div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">' +
+                    '<i class="fas fa-user-md text-emerald-600 text-xl"></i>' +
+                    '</div>' +
+                    '<div>' +
+                    '<h4 class="font-semibold text-gray-900 text-lg">' + escapeHtml(apt.doctor.nom) + '</h4>' +
+                    '<p class="text-sm text-gray-600">' + (apt.doctor.specialite || apt.doctor.titre) + '</p>' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="grid grid-cols-2 gap-4 mt-4">' +
+                    '<div>' +
+                    '<p class="text-xs text-gray-500 mb-1">Date</p>' +
+                    '<p class="font-medium text-gray-900"><i class="fas fa-calendar mr-2 text-emerald-600"></i>' + dateStr + '</p>' +
+                    '</div>' +
+                    '<div>' +
+                    '<p class="text-xs text-gray-500 mb-1">Heure</p>' +
+                    '<p class="font-medium text-gray-900"><i class="fas fa-clock mr-2 text-emerald-600"></i>' + apt.heure + '</p>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="text-right">' +
+                    '<span class="px-4 py-2 bg-emerald-100 text-emerald-700 text-sm font-medium rounded-full">' +
+                    '<i class="fas fa-check-circle mr-1"></i>' + apt.statut +
+                    '</span>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>';
+            });
+            
+            html += '</div>';
+            
+            // Ajouter le bouton "Charger plus" si nécessaire
+            if (hasMoreAppointments) {
+                html += '<div class="text-center mt-6">' +
+                    '<button onclick="loadMoreAppointments()" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition">' +
+                    '<i class="fas fa-chevron-down mr-2"></i>Charger plus de rendez-vous (' + pageSize + ' par page)' +
+                    '</button>' +
+                    '</div>';
+            } else {
+                html += '<div class="text-center mt-6 text-gray-500 text-sm">' +
+                    '<i class="fas fa-check-circle mr-2"></i>Tous les rendez-vous chargés (' + appointments.length + ' total)' +
+                    '</div>';
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        // Charger les rendez-vous au chargement de la page
+        window.addEventListener('DOMContentLoaded', function() {
+            loadPlannedAppointments();
+        });
         
         // ===== STEP 1: Department Selection =====
         async function selectDepartment(departmentId, departmentName) {
