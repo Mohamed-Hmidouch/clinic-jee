@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import org.example.clinicjee.config.JPAUtil;
 import org.example.clinicjee.domain.Specialty;
 import org.example.clinicjee.repository.interfaces.SpecialtyRepositoryInterface;
+import java.util.List;
 import java.util.Optional;
 
 public class SpecialtyRepository implements SpecialtyRepositoryInterface {
@@ -16,6 +17,19 @@ public class SpecialtyRepository implements SpecialtyRepositoryInterface {
             return Optional.ofNullable(specialty);
         } catch (Exception e) {
             return Optional.empty();
+        } finally {
+            em.close();
+        }
+    }
+    
+    public List<Specialty> findByDepartmentId(Long departmentId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                "SELECT s FROM Specialty s WHERE s.department.id = :departmentId ORDER BY s.nom", 
+                Specialty.class)
+                .setParameter("departmentId", departmentId)
+                .getResultList();
         } finally {
             em.close();
         }

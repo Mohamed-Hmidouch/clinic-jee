@@ -126,37 +126,37 @@
                 <div id="step1" class="booking-step">
                     <h3 class="text-xl font-semibold text-gray-900 mb-4">Étape 1 : Choisissez le Département</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <button onclick="selectDepartment('Médecine Générale')" class="department-btn p-6 border-2 border-gray-200 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition text-left">
+                        <button onclick="selectDepartment(1, 'Médecine Générale')" class="department-btn p-6 border-2 border-gray-200 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition text-left">
                             <i class="fas fa-stethoscope text-emerald-600 text-2xl mb-3"></i>
                             <h4 class="font-semibold text-gray-900">Médecine Générale</h4>
                             <p class="text-sm text-gray-600 mt-1">Consultations générales</p>
                         </button>
                         
-                        <button onclick="selectDepartment('Cardiologie')" class="department-btn p-6 border-2 border-gray-200 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition text-left">
+                        <button onclick="selectDepartment(2, 'Cardiologie')" class="department-btn p-6 border-2 border-gray-200 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition text-left">
                             <i class="fas fa-heartbeat text-red-500 text-2xl mb-3"></i>
                             <h4 class="font-semibold text-gray-900">Cardiologie</h4>
                             <p class="text-sm text-gray-600 mt-1">Maladies du cœur</p>
                         </button>
                         
-                        <button onclick="selectDepartment('Pédiatrie')" class="department-btn p-6 border-2 border-gray-200 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition text-left">
+                        <button onclick="selectDepartment(3, 'Pédiatrie')" class="department-btn p-6 border-2 border-gray-200 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition text-left">
                             <i class="fas fa-baby text-pink-500 text-2xl mb-3"></i>
                             <h4 class="font-semibold text-gray-900">Pédiatrie</h4>
                             <p class="text-sm text-gray-600 mt-1">Soins pour enfants</p>
                         </button>
                         
-                        <button onclick="selectDepartment('Neurologie')" class="department-btn p-6 border-2 border-gray-200 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition text-left">
+                        <button onclick="selectDepartment(4, 'Neurologie')" class="department-btn p-6 border-2 border-gray-200 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition text-left">
                             <i class="fas fa-brain text-purple-500 text-2xl mb-3"></i>
                             <h4 class="font-semibold text-gray-900">Neurologie</h4>
                             <p class="text-sm text-gray-600 mt-1">Système nerveux</p>
                         </button>
                         
-                        <button onclick="selectDepartment('Orthopédie')" class="department-btn p-6 border-2 border-gray-200 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition text-left">
+                        <button onclick="selectDepartment(5, 'Orthopédie')" class="department-btn p-6 border-2 border-gray-200 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition text-left">
                             <i class="fas fa-bone text-orange-500 text-2xl mb-3"></i>
                             <h4 class="font-semibold text-gray-900">Orthopédie</h4>
                             <p class="text-sm text-gray-600 mt-1">Os et articulations</p>
                         </button>
                         
-                        <button onclick="selectDepartment('Dermatologie')" class="department-btn p-6 border-2 border-gray-200 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition text-left">
+                        <button onclick="selectDepartment(6, 'Dermatologie')" class="department-btn p-6 border-2 border-gray-200 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition text-left">
                             <i class="fas fa-hand-sparkles text-teal-500 text-2xl mb-3"></i>
                             <h4 class="font-semibold text-gray-900">Dermatologie</h4>
                             <p class="text-sm text-gray-600 mt-1">Problèmes de peau</p>
@@ -295,6 +295,18 @@
     </main>
 
     <script>
+        // Fonction pour échapper les caractères HTML
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+        
         // Variables globales pour stocker les sélections
         let selectedDepartment = null;
         let selectedSpecialty = null;
@@ -304,67 +316,10 @@
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
         
-        // Données statiques pour les spécialités par département
-        const departmentSpecialties = {
-            'Médecine Générale': [
-                { id: 1, name: 'Consultation Générale', description: 'Examens de routine' },
-                { id: 2, name: 'Médecine Préventive', description: 'Vaccinations et dépistage' },
-                { id: 3, name: 'Médecine du Sport', description: 'Blessures sportives' }
-            ],
-            'Cardiologie': [
-                { id: 4, name: 'Cardiologie Générale', description: 'Maladies cardiaques' },
-                { id: 5, name: 'Électrophysiologie', description: 'Troubles du rythme' },
-                { id: 6, name: 'Cardiologie Interventionnelle', description: 'Cathétérisme' }
-            ],
-            'Pédiatrie': [
-                { id: 7, name: 'Pédiatrie Générale', description: 'Soins pour enfants 0-18 ans' },
-                { id: 8, name: 'Néonatologie', description: 'Soins pour nouveau-nés' },
-                { id: 9, name: 'Pédiatrie du Développement', description: 'Croissance et développement' }
-            ],
-            'Neurologie': [
-                { id: 10, name: 'Neurologie Générale', description: 'Troubles nerveux' },
-                { id: 11, name: 'Neurologie Pédiatrique', description: 'Troubles chez enfants' },
-                { id: 12, name: 'Neuro-oncologie', description: 'Tumeurs cérébrales' }
-            ],
-            'Orthopédie': [
-                { id: 13, name: 'Orthopédie Générale', description: 'Fractures et traumatismes' },
-                { id: 14, name: 'Chirurgie de la Main', description: 'Pathologies de la main' },
-                { id: 15, name: 'Orthopédie Pédiatrique', description: 'Os et articulations enfants' }
-            ],
-            'Dermatologie': [
-                { id: 16, name: 'Dermatologie Générale', description: 'Maladies de la peau' },
-                { id: 17, name: 'Dermatologie Esthétique', description: 'Soins esthétiques' },
-                { id: 18, name: 'Dermatologie Pédiatrique', description: 'Peau des enfants' }
-            ]
-        };
-        
-        // Données statiques pour les médecins par spécialité
-        // NOTE: Les IDs correspondent aux IDs réels dans la base de données
-        const specialtyDoctors = {
-            1: [
-                { id: 2, name: 'Dr. Ahmed Benali', experience: '15 ans', rating: 4.8, image: 'fa-user-md', available: true },
-                { id: 3, name: 'Dr. Fatima Alaoui', experience: '12 ans', rating: 4.9, image: 'fa-user-md', available: true }
-            ],
-            3: [
-                { id: 4, name: 'Dr. Hassan Idrissi', experience: '8 ans', rating: 4.7, image: 'fa-user-md', available: true }
-            ],
-            4: [
-                { id: 2, name: 'Dr. Ahmed Benali', experience: '15 ans', rating: 4.8, image: 'fa-user-md', available: true },
-                { id: 3, name: 'Dr. Fatima Alaoui', experience: '12 ans', rating: 4.9, image: 'fa-user-md', available: true }
-            ],
-            7: [
-                { id: 2, name: 'Dr. Ahmed Benali', experience: '15 ans', rating: 4.8, image: 'fa-user-md', available: true }
-            ],
-            10: [
-                { id: 3, name: 'Dr. Fatima Alaoui', experience: '12 ans', rating: 4.9, image: 'fa-user-md', available: true }
-            ],
-            13: [
-                { id: 4, name: 'Dr. Hassan Idrissi', experience: '8 ans', rating: 4.7, image: 'fa-user-md', available: true }
-            ],
-            16: [
-                { id: 2, name: 'Dr. Ahmed Benali', experience: '15 ans', rating: 4.8, image: 'fa-user-md', available: true }
-            ]
-        };
+        // Données chargées dynamiquement depuis l'API
+        let departmentsData = [];
+        let currentSpecialties = [];
+        let currentDoctors = [];
         
         // Jours fériés marocains 2025 (statique pour le moment)
         const holidays = [
@@ -378,17 +333,60 @@
             '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00'
         ];
         
+        // ===== API Calls =====
+        async function loadDepartments() {
+            try {
+                const response = await fetch('/api/departments?action=list');
+                const data = await response.json();
+                if (data.success) {
+                    departmentsData = data.departments;
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des départements:', error);
+            }
+        }
+        
+        async function loadSpecialties(departmentId) {
+            try {
+                const response = await fetch('/api/departments?action=specialties&departmentId=' + departmentId);
+                const data = await response.json();
+                if (data.success) {
+                    currentSpecialties = data.specialties;
+                    return currentSpecialties;
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des spécialités:', error);
+            }
+            return [];
+        }
+        
+        async function loadDoctors(specialtyId) {
+            try {
+                const response = await fetch('/api/departments?action=doctors&specialtyId=' + specialtyId);
+                const data = await response.json();
+                if (data.success) {
+                    currentDoctors = data.doctors;
+                    return currentDoctors;
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des docteurs:', error);
+            }
+            return [];
+        }
+        
         // ===== STEP 1: Department Selection =====
-        function selectDepartment(department) {
-            selectedDepartment = department;
-            displaySpecialties(department);
+        async function selectDepartment(departmentId, departmentName) {
+            selectedDepartment = { id: departmentId, name: departmentName };
+            await displaySpecialties(departmentId);
             goToStep(2);
         }
         
         // ===== STEP 2: Specialty Selection =====
-        function displaySpecialties(department) {
-            const specialties = departmentSpecialties[department] || [];
+        async function displaySpecialties(departmentId) {
             const container = document.getElementById('specialties-container');
+            container.innerHTML = '<p class="text-gray-500 col-span-2 text-center py-8">Chargement des spécialités...</p>';
+            
+            const specialties = await loadSpecialties(departmentId);
             
             if (specialties.length === 0) {
                 container.innerHTML = '<p class="text-gray-500 col-span-2 text-center py-8">Aucune spécialité disponible pour ce département</p>';
@@ -396,50 +394,51 @@
             }
             
             container.innerHTML = specialties.map(function(specialty) {
-                return '<button onclick="selectSpecialty(' + specialty.id + ', \'' + specialty.name + '\')" ' +
+                return '<button onclick="selectSpecialty(' + specialty.id + ', \'' + escapeHtml(specialty.nom) + '\')" ' +
                        'class="specialty-btn p-6 border-2 border-gray-200 rounded-xl hover:border-teal-500 hover:bg-teal-50 transition text-left">' +
                        '<div class="flex items-start gap-4">' +
                        '<div class="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0">' +
                        '<i class="fas fa-stethoscope text-teal-600 text-xl"></i>' +
                        '</div>' +
                        '<div>' +
-                       '<h4 class="font-semibold text-gray-900">' + specialty.name + '</h4>' +
-                       '<p class="text-sm text-gray-600 mt-1">' + specialty.description + '</p>' +
+                       '<h4 class="font-semibold text-gray-900">' + escapeHtml(specialty.nom) + '</h4>' +
+                       '<p class="text-sm text-gray-600 mt-1">' + (specialty.code || '') + '</p>' +
                        '</div>' +
                        '</div>' +
                        '</button>';
             }).join('');
         }
         
-        function selectSpecialty(specialtyId, specialtyName) {
+        async function selectSpecialty(specialtyId, specialtyName) {
             selectedSpecialty = { id: specialtyId, name: specialtyName };
-            displayDoctors(specialtyId);
+            await displayDoctors(specialtyId);
             goToStep(3);
         }
         
         // ===== STEP 3: Doctor Selection =====
-        function displayDoctors(specialtyId) {
-            const doctors = specialtyDoctors[specialtyId] || specialtyDoctors[1]; // Fallback to general doctors
+        async function displayDoctors(specialtyId) {
             const container = document.getElementById('doctors-container');
+            container.innerHTML = '<p class="text-gray-500 col-span-2 text-center py-8">Chargement des médecins...</p>';
+            
+            const doctors = await loadDoctors(specialtyId);
+            
+            if (doctors.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 col-span-2 text-center py-8">Aucun médecin disponible pour cette spécialité</p>';
+                return;
+            }
             
             container.innerHTML = doctors.map(function(doctor) {
                 return '<div class="doctor-card p-6 border-2 border-gray-200 rounded-xl hover:border-emerald-500 hover:shadow-lg transition cursor-pointer" ' +
-                       'onclick="selectDoctor(' + doctor.id + ', \'' + doctor.name + '\')">' +
+                       'onclick="selectDoctor(' + doctor.id + ', \'' + escapeHtml(doctor.nom) + '\')">' +
                        '<div class="flex items-center gap-4">' +
                        '<div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">' +
-                       '<i class="fas ' + doctor.image + ' text-emerald-600 text-2xl"></i>' +
+                       '<i class="fas fa-user-md text-emerald-600 text-2xl"></i>' +
                        '</div>' +
                        '<div class="flex-1">' +
-                       '<h4 class="font-semibold text-gray-900 text-lg">' + doctor.name + '</h4>' +
+                       '<h4 class="font-semibold text-gray-900 text-lg">' + escapeHtml(doctor.nom) + '</h4>' +
                        '<p class="text-sm text-gray-600 mt-1">' +
-                       '<i class="fas fa-briefcase text-teal-600 mr-2"></i>' + doctor.experience + ' d\'expérience' +
+                       '<i class="fas fa-id-badge text-teal-600 mr-2"></i>' + (doctor.titre || 'Docteur') +
                        '</p>' +
-                       '<div class="flex items-center gap-2 mt-2">' +
-                       '<div class="flex text-yellow-400">' +
-                       '<i class="fas fa-star"></i>'.repeat(Math.floor(doctor.rating)) +
-                       '</div>' +
-                       '<span class="text-sm text-gray-600">' + doctor.rating + '/5</span>' +
-                       '</div>' +
                        '</div>' +
                        '<div>' +
                        '<span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">' +
